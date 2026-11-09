@@ -632,6 +632,36 @@ class TableDataWidget extends StatelessWidget {
                                             controller.page = item ?? 1;
                                             controller.setCorretDataSource();
                                           },
+                                          // O botão fechado do DropdownButton
+                                          // monta e MEDE todos os itens (um
+                                          // IndexedStack) para se dimensionar.
+                                          // Com uma página por item, 111 mil
+                                          // registros viravam ~11 mil textos
+                                          // medidos a cada build (~3,5 s de
+                                          // layout no web). Aqui só a página
+                                          // atual tem texto; as outras são
+                                          // caixas vazias. O que aparece é o
+                                          // mesmo, e o menu aberto continua
+                                          // usando `items` (montado sob
+                                          // demanda pela lista do menu).
+                                          selectedItemBuilder: (_) =>
+                                              List<Widget>.generate(
+                                                  total,
+                                                  (index) => index + 1 ==
+                                                          controller.page
+                                                      ? DropdownMenuItem<int>(
+                                                          value: index + 1,
+                                                          child: Text(
+                                                              '${(controller.quantityItensPage * index) + 1}-${controller.quantityItensPage * (index + 1)}',
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                              style: controller
+                                                                  .selectModel!
+                                                                  .theme
+                                                                  .defaultTextStyle))
+                                                      : const SizedBox
+                                                          .shrink()),
                                           items: List<DropdownMenuItem<int>>.generate(
                                               total,
                                               (index) => DropdownMenuItem(
